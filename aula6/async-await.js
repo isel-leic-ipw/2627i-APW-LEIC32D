@@ -1,3 +1,5 @@
+
+
 function printGameInfoThen(){
     return fetch("https://api.rawg.io/api/games/3498?key=c8b47b32d37a4c1d979bd5b6e0b50077")
         .then(resp=>{
