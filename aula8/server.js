@@ -11,6 +11,7 @@ app.post("/students", createStudentHandler)
 
 app.listen("8080", ()=>console.log("LISTENING!!!"))
 
+
 function getStudentsHandler(req, resp){
     console.log("getStudentsHandler")
     console.log(req.query)
