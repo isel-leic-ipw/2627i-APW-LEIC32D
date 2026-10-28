@@ -1,0 +1,39 @@
+GET http://localhost:8080/lists
+
+###
+
+GET http://localhost:8080/lists/1
+
+###
+
+POST http://localhost:8080/lists
+Content-Type: application/json
+
+{
+    "name" : "Lista 1"
+}
+
+###
+
+PUT http://localhost:8080/lists/1
+Content-Type: application/json
+
+{
+    "name" : "Lista 2",
+    "items" : []
+}
+
+###
+DELETE http://localhost:8080/lists/1
+
+###
+
+POST http://localhost:8080/lists/1/items
+Content-Type: application/json
+
+{
+    "name" : "leite"
+}
+###
+DELETE http://localhost:8080/lists/1/items/1
+

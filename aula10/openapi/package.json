@@ -1,0 +1,12 @@
+{
+  "name": "openapi-docs",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.0.0",
+    "swagger-ui-express": "^5.0.0"
+  }
+}
