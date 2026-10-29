@@ -1,38 +1,31 @@
-const lists = [
-    {
-        id : 1,
-        name : "supermercado",
-        items : []
-    }
-
-]
+import data from './lists-data.js'
 
 function getLists(){
-    return lists
+    return data.getList()
 } 
 
 function getList(id){
-    return "getList"
+    return data.getList(id)
 } 
 
 function createList(name){
-    return "createList"
+    return data.createList(name)
 } 
 
 function updateList(id, name, items){
-    return "updateList"
+    return data.updateList(id,name,items)
 } 
 
 function deleteList(id){
-   return "deleteList"
+   return data.delete(id)
 }
 
 function addItem(name){
-    return "addItem"
+    return data.addItem(name)
 }
 
 function removeItem(id){
-    return "removeItem"
+    return data.removeItem(id)
 }
 
 export default  {

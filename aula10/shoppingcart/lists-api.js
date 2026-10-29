@@ -1,9 +1,10 @@
-import services from './list-services.js'
+import services from './lists-services.js'
 
 
 function getLists(request, response){
-    const lists = services.getLists()
-    response.json(lists)
+    return services.getLists()
+             .then(lists=>response.json(lists))
+  
 } 
 
 function getList(request, response){

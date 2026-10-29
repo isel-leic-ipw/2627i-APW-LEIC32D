@@ -31,4 +31,3 @@ function loadOpenApi() {
   const content = fs.readFileSync(OPENAPI_FILE, 'utf8');
   return JSON.parse(content);
 }
-
