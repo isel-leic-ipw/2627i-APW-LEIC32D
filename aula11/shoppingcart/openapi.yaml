@@ -1,0 +1,346 @@
+openapi: 3.0.3
+
+info:
+  title: Shopping List API
+  description: API para gerir listas de compras e os respetivos itens.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+
+tags:
+  - name: Lists
+    description: Operações sobre listas de compras
+  - name: Items
+    description: Operações sobre os itens de uma lista
+
+paths:
+  /lists:
+    get:
+      tags:
+        - Lists
+      summary: Obter todas as listas
+      operationId: getLists
+      responses:
+        "200":
+          description: Listas devolvidas com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShoppingList"
+              example:
+                - id: 1
+                  name: Compras da semana
+                  items:
+                    - id: 1
+                      name: Leite
+                      quantity: 2
+                      completed: false
+    post:
+      tags:
+        - Lists
+      summary: Criar uma lista
+      operationId: createList
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListInput"
+      responses:
+        "201":
+          description: Lista criada com sucesso
+          headers:
+            Location:
+              description: URI da lista criada
+              schema:
+                type: string
+              example: /lists/1
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+
+  /lists/{id-list}:
+    parameters:
+      - $ref: "#/components/parameters/ListId"
+    get:
+      tags:
+        - Lists
+      summary: Consultar uma lista
+      operationId: getListById
+      responses:
+        "200":
+          description: Lista devolvida com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ListNotFound"
+    put:
+      tags:
+        - Lists
+      summary: Alterar uma lista
+      operationId: updateList
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListInput"
+      responses:
+        "200":
+          description: Lista alterada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShoppingList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ListNotFound"
+    delete:
+      tags:
+        - Lists
+      summary: Apagar uma lista
+      operationId: deleteList
+      responses:
+        "200":
+          description: Lista apagada com sucesso; devolve o handler chamado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HandlerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ListNotFound"
+
+  /lists/{id-list}/items:
+    parameters:
+      - $ref: "#/components/parameters/ListId"
+    post:
+      tags:
+        - Items
+      summary: Adicionar um item a uma lista
+      operationId: addItemToList
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ItemInput"
+      responses:
+        "201":
+          description: Item adicionado com sucesso
+          headers:
+            Location:
+              description: URI do item criado
+              schema:
+                type: string
+              example: /lists/1/items/1
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ListNotFound"
+
+  /lists/{id-list}/items/{id-item}:
+    parameters:
+      - $ref: "#/components/parameters/ListId"
+      - $ref: "#/components/parameters/ItemId"
+    delete:
+      tags:
+        - Items
+      summary: Remover um item de uma lista
+      operationId: deleteItemFromList
+      responses:
+        "200":
+          description: Item removido com sucesso; devolve o handler chamado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HandlerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ItemNotFound"
+
+  /lists/{id-list}/items/{id-item}/toggle:
+    parameters:
+      - $ref: "#/components/parameters/ListId"
+      - $ref: "#/components/parameters/ItemId"
+    post:
+      tags:
+        - Items
+      summary: Alternar o estado de um item
+      description: Alterna o valor de `completed` entre `true` e `false`.
+      operationId: toggleItem
+      responses:
+        "200":
+          description: Estado do item alterado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/ItemNotFound"
+
+components:
+  parameters:
+    ListId:
+      name: id-list
+      in: path
+      description: Identificador da lista
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+    ItemId:
+      name: id-item
+      in: path
+      description: Identificador do item
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+      example: 1
+
+  schemas:
+    HandlerResponse:
+      type: object
+      required:
+        - handler
+      properties:
+        handler:
+          type: string
+          description: Nome do handler executado
+          example: deleteList
+
+    ShoppingList:
+      type: object
+      required:
+        - id
+        - name
+        - items
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Compras da semana
+        items:
+          type: array
+          readOnly: true
+          items:
+            $ref: "#/components/schemas/Item"
+
+    ListInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Compras da semana
+
+    Item:
+      type: object
+      required:
+        - id
+        - name
+        - quantity
+        - completed
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Leite
+        quantity:
+          type: integer
+          minimum: 1
+          example: 2
+        completed:
+          type: boolean
+          readOnly: true
+          example: false
+
+    ItemInput:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Leite
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+          example: 2
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: Recurso não encontrado
+
+  responses:
+    BadRequest:
+      description: Pedido inválido
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Pedido inválido
+    ListNotFound:
+      description: Lista não encontrada
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Lista não encontrada
+    ItemNotFound:
+      description: Lista ou item não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            error: Item não encontrado
