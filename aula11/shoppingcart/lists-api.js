@@ -14,7 +14,10 @@ async function getList(request, response){
     return services.getUser(token)
            .then(user => services.getList(user.id,request.params.listId))
            .then(list =>  response.json(list))
-           .catch(e => response.status(404).json(e))
+           .catch(e => {
+                if(e && e.code=="e1") response.status(404).json(e)
+                else response.status(500).json(e)
+            })
 } 
 
 function createList(request, response){
