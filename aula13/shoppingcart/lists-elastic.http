@@ -1,0 +1,78 @@
+GET http://localhost:9200/users/_mapping
+
+###
+GET http://localhost:9200/_cluster/settings?include_defaults=true&filter_path=**.disk.watermark*
+
+
+###
+DELETE http://localhost:9200/users
+
+###
+
+PUT http://localhost:9200/users
+
+###
+
+PUT http://localhost:9200/users/_doc/11A
+Content-Type: application/json
+
+{
+    "userName" : "Filipe", 
+    "token" : "3fa85f64-5717-4562-b3fc-2c963f66afa6" 
+}
+
+###
+
+PUT http://localhost:9200/users/_doc/12A
+Content-Type: application/json
+
+{
+    "userName" : "Joao", 
+    "token" : "3fa85f64-5717-4562-b3fc-2c963f66afa7" 
+}
+
+###
+
+GET http://localhost:9200/users/_search?q=token.keyword:"3fa85f64-5717-4562-b3fc-2c963f66afa6"
+
+###
+
+DELETE http://localhost:9200/lists
+
+###
+PUT http://localhost:9200/lists
+
+###
+POST http://localhost:9200/lists/_doc
+Content-Type: application/json
+
+{   
+    "name" : "list 1", 
+    "userID" : "11A",
+    "items" : []
+} 
+
+###
+
+POST http://localhost:9200/lists/_doc
+Content-Type: application/json
+
+{
+    "name" : "list 2",
+    "userId" : "12A",
+    "items" : []
+}
+###
+GET http://localhost:9200/lists/_search
+
+###
+
+GET http://localhost:9200/lists/_search?q=_id:11-f5aEBHr5ZQW7xPMdx AND userID:11A
+Accept: application/json
+
+###
+
+GET http://localhost:9200/users/_search?q=token.keyword:3fa85f64-5717-4562-b3fc-2c963f66afa6
+
+
+###
